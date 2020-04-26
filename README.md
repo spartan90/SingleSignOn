@@ -17,8 +17,16 @@ Single Sign On
    a) POST on http://localhost:8081/authenticate
    
       with body 
+      
       {
           "userId": "1234567890",
+          "password": "abc"
+      }
+      
+      or 
+      
+      {
+          "userId": "sample@email.com",
           "password": "abc"
       }
    

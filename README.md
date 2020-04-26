@@ -7,7 +7,8 @@ Single Sign On
     mvn spring-boot:run
 4. application(tomcat) will be listening on http://localhost:8081/
 5. H2 database console : http://localhost:8081/h2-console
-   use below JSBC URL on h2 console login page
+
+   use below JDBC URL on h2 console login page
    
    jdbc:h2:file:D:\work\SingleSignOn\singlesignon\database/singlesignondb
    

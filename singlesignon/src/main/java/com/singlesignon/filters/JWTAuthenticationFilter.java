@@ -38,17 +38,18 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter{
 			throws ServletException, IOException {
 		
 		String token = request.getHeader("Authorization");
-		LOGGER.debug("Custome filter############################################# {}", token);
+		LOGGER.debug("Custome filter : {}", token);
 		
 		if(token != null) {
 			Claims claim = Jwts.parser().setSigningKey(keyUtility.getPublicKey()).parseClaimsJws(token).getBody();
 			if(claim != null) {
-				UserDetails userDetails = userDetailService.loadUserByUsername(claim.getSubject());
+				UserDetails userDetails = userDetailService.buildUserFromClaim(claim);
+				LOGGER.debug("from DB : {}", userDetails);
+				LOGGER.debug("from claims : {}", userDetails);
 				if(userDetails != null) {
 					UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
 	                        userDetails, null, userDetails.getAuthorities());
-	                usernamePasswordAuthenticationToken
-	                        .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+	                usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 	                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 				}
 			}

@@ -6,11 +6,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
+@Table(name="systemuser")
 public class User implements UserDetails{
 	private static final long serialVersionUID = -5965314264252115679L;
 	@Id
@@ -20,6 +22,8 @@ public class User implements UserDetails{
 	String password;
 	String emailId;
 	String mobileNo;
+	
+	public User() {}
 	
 	public User(String userName, String password){
 		this.userName = userName;
@@ -82,6 +86,11 @@ public class User implements UserDetails{
 		// TODO Auto-generated method stub
 		return true;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "User [userSeqNo=" + userSeqNo + ", userName=" + userName + ", password=" + password + ", emailId="
+				+ emailId + ", mobileNo=" + mobileNo + "]";
+	}
 	
 }

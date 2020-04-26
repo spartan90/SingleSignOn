@@ -10,12 +10,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.singlesignon.model.JWTRequest;
 import com.singlesignon.model.JWTResponse;
+import com.singlesignon.model.User;
+import com.singlesignon.service.CustomeUserDetailsService;
 import com.singlesignon.utility.SecurityKeyUtility;
 
 import io.jsonwebtoken.Jwts;
@@ -35,21 +38,24 @@ public class Authonticate {
 	@Value("${security.jwttoken.expiration_in_seconds}")
 	Integer JWT_TOKEN_EXPIRATION_SECONDS;
 	
+	@Autowired
+	private CustomeUserDetailsService userDetailService;
+	
 	@PostMapping("/authenticate")
 	public ResponseEntity<?> authenticate(@RequestBody JWTRequest jwtRequest) throws Exception {
 		String token = null;
-		LOGGER.debug("JWT_TOKEN_EXPIRATION_SECONDS : {}", JWT_TOKEN_EXPIRATION_SECONDS);
-		LOGGER.debug("keyUtility : {}", keyUtility);
-		authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(jwtRequest.getUserId(), jwtRequest.getPassword()));
+		Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(jwtRequest.getUserId(), jwtRequest.getPassword()));
+		LOGGER.debug("auth >>>> {}" , auth);
+		User user = (User)auth.getPrincipal();
+		HashMap<String, Object> claims = userDetailService.buildClaimFromUser(user);
+		token = Jwts.builder()
+				.setClaims(claims)
+				.setSubject(""+user.getUserSeqNo())
+				.setIssuedAt(new Date(System.currentTimeMillis()))
+				.setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_EXPIRATION_SECONDS * 1000))
+				.signWith(SignatureAlgorithm.RS512, keyUtility.getPrivateKey())
+				.compact();
 		
-		HashMap<String, Object> claims = new HashMap<String, Object>();
-		token = Jwts.builder().setClaims(claims).setSubject("1").setIssuedAt(new Date(System.currentTimeMillis()))
-		.setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_EXPIRATION_SECONDS * 1000))
-		.signWith(SignatureAlgorithm.RS512, keyUtility.getPrivateKey()).compact();
-		
-		String newPS = SecurityKeyUtility.convertKeyToBase64String(keyUtility.getPublicKey());
-		
-		LOGGER.debug("Claims : {}", Jwts.parser().setSigningKey(SecurityKeyUtility.convertBase64StringToKey(newPS)).parseClaimsJws(token).getBody());
 		return ResponseEntity.ok(new JWTResponse(token));
 	}
 	

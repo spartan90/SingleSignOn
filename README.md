@@ -1,7 +1,7 @@
 # SingleSignOn
 Single Sign On
 
-1. check out / clone to local file system. lets say in D:\work\
+1. check out(clone) to local file system. lets say in D:\work\
 2. open commond prompt and navigate to D:\work\SingleSignOn\singlesignon
 3. run command
     mvn spring-boot:run

@@ -17,11 +17,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.singlesignon.service.CustomeUserDetailsService;
-import com.singlesignon.utility.SecurityKeyUtility;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
+import com.singlesignon.utility.JWTUtility;
 
 @Component
 public class JWTAuthenticationFilter extends OncePerRequestFilter{
@@ -29,29 +25,23 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter{
 	private static final Logger LOGGER = LoggerFactory.getLogger(JWTAuthenticationFilter.class);
 
 	@Autowired
-	private SecurityKeyUtility keyUtility;
-	@Autowired
-	private CustomeUserDetailsService userDetailService;
+	JWTUtility jwtUtil;
 	
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 		
 		String token = request.getHeader("Authorization");
-		LOGGER.debug("Custome filter : {}", token);
+		LOGGER.debug("in Custome filter. token : {}", token);
 		
 		if(token != null) {
-			Claims claim = Jwts.parser().setSigningKey(keyUtility.getPublicKey()).parseClaimsJws(token).getBody();
-			if(claim != null) {
-				UserDetails userDetails = userDetailService.buildUserFromClaim(claim);
-				LOGGER.debug("from DB : {}", userDetails);
-				LOGGER.debug("from claims : {}", userDetails);
-				if(userDetails != null) {
-					UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-	                        userDetails, null, userDetails.getAuthorities());
-	                usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-	                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-				}
+			UserDetails userDetails = jwtUtil.validateAndExtractUser(token);
+			LOGGER.debug("userDetails built from claims : {}", userDetails);
+			if(userDetails != null) {
+				UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
+                usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 			}
 		}
 		filterChain.doFilter(request, response);

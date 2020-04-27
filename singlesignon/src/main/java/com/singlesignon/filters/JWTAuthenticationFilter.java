@@ -35,13 +35,17 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter{
 		LOGGER.debug("in Custome filter. token : {}", token);
 		
 		if(token != null) {
-			UserDetails userDetails = jwtUtil.validateAndExtractUser(token);
-			LOGGER.debug("userDetails built from claims : {}", userDetails);
-			if(userDetails != null) {
-				UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+			try {
+				UserDetails userDetails = jwtUtil.validateAndExtractUser(token);
+				LOGGER.debug("userDetails built from claims : {}", userDetails);
+				if(userDetails != null) {
+					UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+	                        userDetails, null, userDetails.getAuthorities());
+	                usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+	                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+				}
+			}catch(Exception e) {
+				LOGGER.error("Error while parsing token : {}, Error : {}", token, e);
 			}
 		}
 		filterChain.doFilter(request, response);

@@ -10,4 +10,9 @@ public class SecureTest {
 	public String test() {
 		return "test.ok";
 	}
+	
+	@RequestMapping("/test")
+	public String test1() {
+		return "test1.ok";
+	}
 }

@@ -13,6 +13,6 @@ public class SecureTest {
 	
 	@GetMapping("/test")
 	public String test1() {
-		return "test1.ok";
+		return "test spring controller by sarang mane :) ";
 	}
 }

@@ -1,5 +1,5 @@
 # SingleSignOn
-Single Sign On
+Single Sign On(changes)
 
 1. check out(clone) to local file system. lets say in D:\work\
 2. open commond prompt and navigate to D:\work\SingleSignOn\singlesignon

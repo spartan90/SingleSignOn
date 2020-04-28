@@ -11,6 +11,8 @@ import javax.persistence.Table;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name="systemuser")
 public class User implements UserDetails{
@@ -42,6 +44,7 @@ public class User implements UserDetails{
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
+	@JsonIgnore
 	public String getPassword() {
 		return password;
 	}

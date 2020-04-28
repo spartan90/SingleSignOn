@@ -1,17 +1,17 @@
-package com.singlesignon.controller;
+package com.singlesignon.controllers;
 
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class SecureTest {
 
-	@RequestMapping("/secure/test")
+	@GetMapping("/secure/test")
 	public String test() {
 		return "test.ok";
 	}
 	
-	@RequestMapping("/test")
+	@GetMapping("/test")
 	public String test1() {
 		return "test1.ok";
 	}

@@ -12,7 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.singlesignon.filters.JWTAuthenticationFilter;
-import com.singlesignon.service.CustomeUserDetailsService;
+import com.singlesignon.services.CustomeUserDetailsService;
 
 @EnableWebSecurity
 public class SecurityConfigurator extends WebSecurityConfigurerAdapter{
@@ -34,7 +34,7 @@ public class SecurityConfigurator extends WebSecurityConfigurerAdapter{
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.cors().and().csrf().disable()
-		.authorizeRequests().antMatchers("/secure/*").authenticated()
+		.authorizeRequests().antMatchers("/secure/**").authenticated()
 		.anyRequest().permitAll().and()
 		.exceptionHandling().and()
 		.headers()

@@ -1,4 +1,6 @@
-package com.singlesignon.controller;
+package com.singlesignon.controllers;
+
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +30,7 @@ public class Authonticate {
 	JWTUtility jwtUtil;
 	
 	@PostMapping("/authenticate")
-	public ResponseEntity<?> authenticate(@RequestBody JWTRequest jwtRequest) throws Exception {
+	public ResponseEntity<?> authenticate(@Valid @RequestBody JWTRequest jwtRequest) throws Exception {
 		String token = null;
 		Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(jwtRequest.getUserId(), jwtRequest.getPassword()));
 		LOGGER.debug("auth >>>> {}" , auth);
